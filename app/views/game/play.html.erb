@@ -1,0 +1,29 @@
+<div class='text-section'>
+  <div class="title">
+    ROCK - PAPER - SCISSORS
+  </div>
+
+  <div class="desc">
+    Rock Paper Scissors is a zero sum game that is usually played by two people using their hands and no tools. The idea is to make shapes with an outstretched hand where each shape will have a certain degree of power and will lead to an outcome.
+  </div>
+
+  <div id="result">
+    SELECT YOUR BET
+  </div>
+</div>
+
+<div class="choices">
+  <%= button_to game_start_path(player_turn: "rock"),
+    method: :post, form: { data: { turbo: true } }, class: "img-block" do %>
+    <%= image_tag("Rock.svg", size: 150, class: "bet-box") %>
+  <% end %>
+  <%= button_to game_start_path(player_turn: "paper"), 
+    method: :post, form: { data: { turbo: true } }, class: "img-block" do %>
+    <%= image_tag("Paper.svg", size: 150, class: "bet-box") %>
+  <% end %>
+  <%= button_to game_start_path(player_turn: "scissors"),
+    method: :post, form: { data: { turbo: true } }, class: "img-block" do %>
+    <%= image_tag("Scissors.svg", size: 150, class: "bet-box") %>
+  <% end %>
+</div>
+

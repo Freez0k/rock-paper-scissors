@@ -1,14 +1,18 @@
-# README
+# Rock Paper Scissors
 
-* Install
-- bundle install
-- rails s 
-- go to "localhost:3000"
-- press any of "Rock, Paper, Scissors" images
-- enjoy the result
+## Install
 
-* Notes
-- Game work with API call of external service, but will randomize bot turn if API doesn't work or API give something different instead of rock/paper/scissors
+```bash
+bundle install
+rails s
+```
 
-* AI usage
-- Used only for some css styling and for turbo streams, can provide it if needed
+Go to **localhost:3000**, press any of the Rock / Paper / Scissors images, enjoy the result.
+
+## Notes
+
+Game uses an external API for the bot's move. If the API doesn't work or returns something other than rock/paper/scissors, the bot picks a random move.
+
+## AI usage
+
+Used only for some CSS styling and for Turbo Streams; can provide details if needed.

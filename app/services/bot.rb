@@ -1,5 +1,3 @@
-require "rand"
-
 class Bot
   BOT_URL = "https://5eddt4q9dk.execute-api.us-east-1.amazonaws.com/rps-stage"
 

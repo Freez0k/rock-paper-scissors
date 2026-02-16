@@ -1,4 +1,9 @@
-<div id="result">
-  <p><%= message.to_s.upcase %></p>
-</div>
+<% bot_image = "#{@bot_turn.to_s.capitalize}.svg" %>
 
+<p class="modal-result-subtitle">
+  <%= subtitle %>
+</p>
+
+<div class="modal-result-icon">
+  <%= image_tag(bot_image, size: 140, class: "bet-box") %>
+</div>

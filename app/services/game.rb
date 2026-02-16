@@ -6,7 +6,11 @@ class Game
   }
 
   def start(player_turn)
-    result(player_turn, bot_turn)
+    current_bot_turn = bot_turn
+    {
+      result: result(player_turn, current_bot_turn),
+      bot_turn: current_bot_turn
+    }
   end
 
   private

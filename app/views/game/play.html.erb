@@ -14,16 +14,304 @@
 
 <div class="choices">
   <%= button_to game_start_path(player_turn: "rock"),
-    method: :post, form: { data: { turbo: true } }, class: "img-block" do %>
+    method: :post,
+    form: { data: { turbo: true, player_turn: "rock", player_image: image_path("Rock.svg") }, class: "img-block choice-form" } do %>
     <%= image_tag("Rock.svg", size: 150, class: "bet-box") %>
   <% end %>
   <%= button_to game_start_path(player_turn: "paper"), 
-    method: :post, form: { data: { turbo: true } }, class: "img-block" do %>
+    method: :post,
+    form: { data: { turbo: true, player_turn: "paper", player_image: image_path("Paper.svg") }, class: "img-block choice-form" } do %>
     <%= image_tag("Paper.svg", size: 150, class: "bet-box") %>
   <% end %>
   <%= button_to game_start_path(player_turn: "scissors"),
-    method: :post, form: { data: { turbo: true } }, class: "img-block" do %>
+    method: :post,
+    form: { data: { turbo: true, player_turn: "scissors", player_image: image_path("Scissors.svg") }, class: "img-block choice-form" } do %>
     <%= image_tag("Scissors.svg", size: 150, class: "bet-box") %>
   <% end %>
 </div>
+
+<div id="game-modal" class="modal hidden" data-curb-logo-src="<%= image_path('curb_logo.png') %>">
+  <div class="modal-content">
+    <span id="modal-close" class="modal-close">&times;</span>
+    <div id="modal-status" class="title">WAITING CURB'S CHOOSE</div>
+
+    <div id="modal-waiting" class="modal-waiting">
+      <div class="modal-player">
+        <%= image_tag("Rock.svg", size: 120, class: "bet-box", id: "modal-player-image") %>
+        <p class="modal-player-label">Your bet</p>
+      </div>
+
+      <div class="modal-waiting-right">
+        <div id="modal-loader" class="modal-loader">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="modal-brand">
+          <%= image_tag("curb_logo.png", size: 80, alt: "Curb") %>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-result"></div>
+
+    <div id="modal-ok-wrapper" class="modal-ok-wrapper hidden">
+      <button id="modal-ok" class="modal-ok">OK</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal.hidden {
+    display: none;
+  }
+
+  .modal-content {
+    background: #ffffff;
+    padding: 24px 32px;
+    border-radius: 12px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .modal-waiting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 28px;
+    width: 100%;
+  }
+
+  .modal-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .modal-player .bet-box {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+  }
+
+  .modal-player-label {
+    font: normal normal normal 14px/18px Roboto;
+    color: #777777;
+  }
+
+  .modal-waiting-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-loader {
+    height: 120px;
+    width: 120px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .modal-brand {
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .modal-brand img {
+    width: 80px;
+    height: auto;
+    display: block;
+  }
+
+  .modal-loader span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #36006C;
+    opacity: 0.3;
+    animation: pulse 1.2s infinite ease-in-out;
+  }
+
+  .modal-loader span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .modal-loader span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes pulse {
+    0%, 80%, 100% {
+      transform: scale(0.8);
+      opacity: 0.3;
+    }
+    40% {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+  }
+
+  .modal-result-icon {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .modal-result-subtitle {
+    margin-top: 16px;
+    font: normal normal normal 16px/22px Roboto;
+    color: #000000;
+  }
+
+  .modal-ok-wrapper {
+    margin-top: 32px;
+    width: 100%;
+  }
+
+  .modal-ok-wrapper.hidden {
+    display: none;
+  }
+
+  .modal-ok {
+    padding: 12px 0;
+    width: 100%;
+    display: block;
+    border-radius: 0;
+    border: none;
+    background: #36006C;
+    color: #ffffff;
+    font: normal normal medium 16px/20px Montserrat;
+    cursor: pointer;
+  }
+
+  .modal-ok:hover {
+    background: #4b0398;
+  }
+</style>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    var modal = document.getElementById("game-modal");
+    var curbLogoSrc = modal ? modal.dataset.curbLogoSrc : null;
+    var closeBtn = document.getElementById("modal-close");
+
+    document.querySelectorAll("form.choice-form").forEach(function(form) {
+      form.addEventListener("submit", function() {
+        var imageUrl = this.dataset.playerImage;
+
+        var statusEl = document.getElementById("modal-status");
+        var waitingEl = document.getElementById("modal-waiting");
+        var okWrapperEl = document.getElementById("modal-ok-wrapper");
+        var resultEl = document.getElementById("modal-result");
+
+        // Rebuild waiting layout if it was cleared by Turbo
+        if (waitingEl) {
+          waitingEl.style.display = "flex";
+          if (!waitingEl.innerHTML.trim()) {
+            var logoPart = curbLogoSrc ?
+              '<div class="modal-brand"><img src="' + curbLogoSrc + '" alt="Curb" style="width:80px;height:auto;"></div>' :
+              '<div class="modal-brand"></div>';
+
+            waitingEl.innerHTML =
+              '<div class="modal-player">' +
+                '<img id="modal-player-image" class="bet-box" style="width:120px;height:120px;" />' +
+                '<p class="modal-player-label">Your bet</p>' +
+              '</div>' +
+              '<div class="modal-waiting-right">' +
+                '<div id="modal-loader" class="modal-loader">' +
+                  '<span></span><span></span><span></span>' +
+                '</div>' +
+                logoPart +
+              '</div>';
+          }
+        }
+
+        var playerImageEl = document.getElementById("modal-player-image");
+        var loaderEl = document.getElementById("modal-loader");
+
+        if (loaderEl) {
+          loaderEl.innerHTML = "<span></span><span></span><span></span>";
+        }
+        if (playerImageEl && imageUrl) {
+          playerImageEl.src = imageUrl;
+        }
+        if (okWrapperEl) {
+          okWrapperEl.classList.add("hidden");
+        }
+        if (resultEl) {
+          resultEl.innerHTML = "";
+        }
+        if (statusEl) {
+          statusEl.textContent = "WAITING CURB'S CHOOSE";
+        }
+        modal.classList.remove("hidden");
+      });
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function() {
+        modal.classList.add("hidden");
+      });
+    }
+
+    document.addEventListener("click", function(event) {
+      if (event.target && event.target.id === "modal-ok") {
+        var statusEl = document.getElementById("modal-status");
+        var loaderEl = document.getElementById("modal-loader");
+        var waitingEl = document.getElementById("modal-waiting");
+        var okWrapperEl = document.getElementById("modal-ok-wrapper");
+        var resultEl = document.getElementById("modal-result");
+
+        // Reset modal back to pure waiting state for the next round
+        if (statusEl) {
+          statusEl.textContent = "WAITING CURB'S CHOOSE";
+        }
+        if (loaderEl) {
+          loaderEl.innerHTML = "<span></span><span></span><span></span>";
+        }
+        if (waitingEl) {
+          waitingEl.style.display = "flex";
+        }
+        if (okWrapperEl) {
+          okWrapperEl.classList.add("hidden");
+        }
+        if (resultEl) {
+          resultEl.innerHTML = "";
+        }
+
+        modal.classList.add("hidden");
+      }
+    });
+  });
+</script>
 
